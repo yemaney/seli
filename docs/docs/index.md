@@ -18,3 +18,27 @@ flowchart LR
   6(credentials) --> 7;
   7(workers) --> 8(do work)
 ```
+
+---
+
+## Jobs JSON Schema
+
+```json
+{
+    "jobs": [workers...]
+}
+
+```
+
+
+!!! info "workers"
+
+    === "browser"
+        Used to search a url using the address bar.
+
+        ``` json
+        {
+            "kind": "browser",
+            "label": "https://www.youtube.com/"
+        }
+        ```
