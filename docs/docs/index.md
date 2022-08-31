@@ -52,3 +52,14 @@ flowchart LR
             "label" : "//*[@id='buttons']/ytd-button-renderer"
         }
         ```
+
+    === "field"
+        Used to click a button.
+
+        ``` json
+        {
+            "kind" : "field",
+            "label" : "//*[@id='identifierId']",
+            "text" : "username"
+        }
+        ```

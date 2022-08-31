@@ -1,7 +1,7 @@
 import sys
 
 from seli.config_readers import read_jobs
-from seli.workers import browser_worker, button_worker
+from seli.workers import browser_worker, button_worker, field_worker
 
 
 def main():
@@ -13,6 +13,8 @@ def main():
             browser_worker(job["label"])
         if job["kind"] == "button":
             button_worker(job["label"])
+        if job["kind"] == "field":
+            field_worker(job["label"], (job["text"]))
 
 
 if __name__ == "__main__":

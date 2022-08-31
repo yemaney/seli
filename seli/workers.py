@@ -12,3 +12,8 @@ def browser_worker(label: str):
 def button_worker(label: str):
     button = browser.find_element(By.XPATH, label)
     button.click()
+
+
+def field_worker(label: str, text: str):
+    button = browser.find_element(By.XPATH, label)
+    button.send_keys(text)
