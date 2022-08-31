@@ -1,14 +1,14 @@
 import json
 
 
-def read_jobs(input) -> list[dict[str, str]]:
+def read_jobs(jobs_filepath: str) -> list[dict[str, str]]:
     """
     Read a json file containing jobs that will be executed by
     seli workers.
 
     Parameters
     ----------
-    input : str
+    jobs_filepath : str
         filepath to jobs json file
 
     Returns
@@ -21,7 +21,7 @@ def read_jobs(input) -> list[dict[str, str]]:
     ValueError
         if the jobs json file doesn't have a 'jobs' key
     """
-    with open(input) as fp:
+    with open(jobs_filepath) as fp:
         jobs = json.load(fp)
 
     if jobs.get("jobs") is None:
