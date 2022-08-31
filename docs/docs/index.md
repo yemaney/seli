@@ -42,3 +42,13 @@ flowchart LR
             "label": "https://www.youtube.com/"
         }
         ```
+
+    === "button"
+        Used to click a button.
+
+        ``` json
+        {
+            "kind" : "button",
+            "label" : "//*[@id='buttons']/ytd-button-renderer"
+        }
+        ```
