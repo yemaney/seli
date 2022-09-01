@@ -1,7 +1,10 @@
 # Seli
-
+<p align="center">
+  <img  src="https://github.com/yemaney/seli/actions/workflows/test.yaml/badge.svg" alt="Test">
+  <img  src="images/coverage.svg" alt="Coverage">
+</p>
 <h1 align="center">
-    extendable selenium worker
+    configurable selenium workers
 </h1>
 
 ---
@@ -39,7 +42,7 @@ flowchart LR
         ``` json
         {
             "kind": "browser",
-            "label": "https://www.youtube.com/"
+            "url": "https://www.youtube.com/"
         }
         ```
 
@@ -49,7 +52,7 @@ flowchart LR
         ``` json
         {
             "kind" : "button",
-            "label" : "//*[@id='buttons']/ytd-button-renderer"
+            "xpath" : "//*[@id='buttons']/ytd-button-renderer"
         }
         ```
 
@@ -59,7 +62,7 @@ flowchart LR
         ``` json
         {
             "kind" : "field",
-            "label" : "//*[@id='identifierId']",
+            "xpath" : "//*[@id='identifierId']",
             "text" : "username"
         }
         ```

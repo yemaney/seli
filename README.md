@@ -8,7 +8,7 @@
 </p>
 
 <h1 align="center">
-    extendable selenium worker
+    configurable selenium workers
 </h1>
 
 ---
