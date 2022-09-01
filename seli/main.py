@@ -1,9 +1,8 @@
 """Main module that orchestrates the execution of the seli workflow.
 """
 
-import sys
 
-from seli.config_readers import read_jobs
+from seli.config_readers import read_args, read_configs
 from seli.workers import get_worker
 
 
@@ -12,8 +11,8 @@ def main():
     Main function of the package. Reads the jobs, and executes them
     with the appropriate worker function.
     """
-    jobs_filepath = sys.argv[1]
-    jobs = read_jobs(jobs_filepath)
+    args = read_args()
+    jobs, _ = read_configs(args)
 
     for job in jobs:
         worker = get_worker(job)

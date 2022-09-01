@@ -4,7 +4,7 @@ import os
 import pytest
 
 from seli import __version__
-from seli.config_readers import read_jobs
+from seli.config_readers import read_configs
 
 
 def test_version():
@@ -22,6 +22,6 @@ def test_read_jobs_fails():
     with pytest.raises(
         ValueError, match="No jobs found : Check if the input has a 'jobs' key"
     ):
-        read_jobs(test_file)
+        read_configs(["", "input.json"])
 
     os.remove(test_file)
