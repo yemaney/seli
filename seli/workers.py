@@ -11,6 +11,7 @@ worker for a job. The only function to be imported into the main
 module.
 """
 
+import functools
 from typing import Callable, Protocol
 
 from selenium import webdriver
@@ -21,6 +22,7 @@ from seli.logging_helper import get_logger
 
 logger = get_logger(__name__)
 
+
 browser = webdriver.Chrome(ChromeDriverManager().install())
 
 
@@ -29,7 +31,42 @@ class ConfigInput(Protocol):
     secrets: dict[str, str]
 
 
-def browser_worker(config_input: ConfigInput):
+worker = Callable[[ConfigInput], None]
+
+
+def log_worker(func: worker) -> worker:
+    """
+    Utility decorator function to add consistent logging behavior to
+    worker functions.
+
+    Parameters
+    ----------
+    func : worker
+        a worker function
+
+    Returns
+    -------
+    worker
+        same worker function passed but with logging enabled
+    """
+
+    @functools.wraps(func)
+    def inner(config_input: ConfigInput) -> None:
+
+        if config_input.job.get("url") is not None:
+            info = config_input.job["url"]
+        else:
+            info = config_input.job["xpath"]
+
+        logger.info(f"{func.__name__} at {info}")
+        res = func(config_input)
+        return res
+
+    return inner
+
+
+@log_worker
+def browser_worker(config_input: ConfigInput) -> None:
     """
     Browses to a particular url.
 
@@ -38,11 +75,11 @@ def browser_worker(config_input: ConfigInput):
     config_input : ConfigInput
         Config dataclass with information to complete the job.
     """
-    logger.info(f"going to url :{config_input.job['url']}")
     browser.get(config_input.job["url"])
 
 
-def button_worker(config_input: ConfigInput):
+@log_worker
+def button_worker(config_input: ConfigInput) -> None:
     """
     Finds a button using an XPATH string and clicks it.
 
@@ -51,12 +88,12 @@ def button_worker(config_input: ConfigInput):
     config_input : ConfigInput
         Config dataclass with information to complete the job.
     """
-    logger.info(f"clicking button at xpath :{config_input.job['xpath']}")
     button = browser.find_element(By.XPATH, config_input.job["xpath"])
     button.click()
 
 
-def field_worker(config_input: ConfigInput):
+@log_worker
+def field_worker(config_input: ConfigInput) -> None:
     """
     Finds a text field using an XPATH and then enters text
     into the field.
@@ -71,12 +108,9 @@ def field_worker(config_input: ConfigInput):
     else:
         keys = config_input.job["text"]
 
-    logger.info(f"sending keys to field at xpath :{config_input.job['xpath']}")
     button = browser.find_element(By.XPATH, config_input.job["xpath"])
     button.send_keys(keys)
 
-
-worker = Callable[[ConfigInput], None]
 
 WORKERS: dict[str, worker] = {
     "browser": browser_worker,
