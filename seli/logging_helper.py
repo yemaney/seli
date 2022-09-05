@@ -4,7 +4,7 @@
 import logging
 
 
-def get_logger(name) -> logging.Logger:
+def get_logger(name : str) -> logging.Logger:
     """
     Creates and returns a logger that logs data into a `logs.log` file
     with a specific format.
