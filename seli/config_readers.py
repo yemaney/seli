@@ -3,26 +3,35 @@
 
 import json
 import sys
-from typing import Union
+from dataclasses import dataclass, field
+from typing import Generator
 
 
-def read_configs(
-    args: list[str],
-) -> tuple[list[dict[str, str]], Union[dict[str, str], None]]:
+@dataclass(frozen=True)
+class Configs:
     """
-    Read a JSON config  file for either a jobs or credentials config.
+    Represents the configuration needed to complete a seli job.
+    """
+
+    job: dict[str, str]
+    secrets: dict[str, str] = field(default_factory=dict, repr=False)
+
+
+def read_configs(args: list[str]) -> Generator[Configs, None, None]:
+    """
+    Read JSON config  files for jobs and secrets and generate Configs
+    dataclasses.
 
     Parameters
     ----------
-    file_path : str
-        path to file being loaded
-    kind : str, optional
-        context of the config file, by default "jobs"
+    args : list[str]
+        list with path to jobs JSON config file and secrets config if
+        it exists
 
-    Returns
-    -------
-    tuple[list[dict[str, str]],  dict[str, str] | None]
-        Tuple of job dictionaries and dict of credentials if they exist
+    Yields
+    ------
+    Generator[Configs, None, None]
+        Configs dataclasses
 
     Raises
     ------
@@ -34,14 +43,19 @@ def read_configs(
         jobs = json.load(fp)
 
     if jobs.get("jobs") is None:
-        raise ValueError("No jobs found : Check if the input has a 'jobs' key")
+        raise ValueError("No jobs found : Check if input has a 'jobs' key")
 
-    credentials = None
+    secrets = None
     if len(args) > 2:
         with open(args[2]) as fp:
-            credentials = json.load(fp)
+            secrets = json.load(fp)
 
-    return jobs["jobs"], credentials
+    for job in jobs.get("jobs"):
+        config_fields = {"job": job}
+        if secrets is not None:
+            config_fields["secrets"] = secrets
+
+        yield Configs(**config_fields)
 
 
 def read_args() -> list[str]:

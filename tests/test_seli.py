@@ -20,8 +20,8 @@ def test_read_jobs_fails():
         )
 
     with pytest.raises(
-        ValueError, match="No jobs found : Check if the input has a 'jobs' key"
+        ValueError, match="No jobs found : Check if input has a 'jobs' key"
     ):
-        read_configs(["", "input.json"])
+        next(read_configs(["", "input.json"]))
 
     os.remove(test_file)

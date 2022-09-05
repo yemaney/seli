@@ -11,7 +11,7 @@ worker for a job. The only function to be imported into the main
 module.
 """
 
-from typing import Callable
+from typing import Callable, Protocol
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -20,50 +20,51 @@ from webdriver_manager.chrome import ChromeDriverManager
 browser = webdriver.Chrome(ChromeDriverManager().install())
 
 
-def browser_worker(job: dict[str, str]):
+class ConfigInput(Protocol):
+    job: dict[str, str]
+    secrets: dict[str, str]
+
+
+def browser_worker(config_input: ConfigInput):
     """
     Browses to a particular url.
 
     Parameters
     ----------
-    job : dict[str, str]
-        dictionary defining the browser worker. In the format
-        `of {"kind" : "browser", "url": "http://google.com"}`
+    config_input : ConfigInput
+        Config dataclass with information to complete the job.
     """
-    browser.get(job["url"])
+    browser.get(config_input.job["url"])
 
 
-def button_worker(job: dict[str, str]):
+def button_worker(config_input: ConfigInput):
     """
     Finds a button using an XPATH string and clicks it.
 
     Parameters
     ----------
-    job : dict[str, str]
-        dictionary defining the browser worker. In the format
-        `{"kind" : "button", "xpath" : "/html/button"}`
+    config_input : ConfigInput
+        Config dataclass with information to complete the job.
     """
-    button = browser.find_element(By.XPATH, job["xpath"])
+    button = browser.find_element(By.XPATH, config_input.job["xpath"])
     button.click()
 
 
-def field_worker(job: dict[str, str]):
+def field_worker(config_input: ConfigInput):
     """
     Finds a text field using an XPATH and then enters text
     into the field.
 
     Parameters
     ----------
-    job : dict[str, str]
-        dictionary defining the field worker. In the format
-        `{"kind" : "field", "xpath" : "/html/enter",
-        "text": "username"}`
+    config_input : ConfigInput
+        Config dataclass with information to complete the job.
     """
-    button = browser.find_element(By.XPATH, job["xpath"])
-    button.send_keys(job["text"])
+    button = browser.find_element(By.XPATH, config_input.job["xpath"])
+    button.send_keys(config_input.job["text"])
 
 
-worker = Callable[[dict[str, str]], None]
+worker = Callable[[ConfigInput], None]
 
 WORKERS: dict[str, worker] = {
     "browser": browser_worker,
@@ -72,15 +73,14 @@ WORKERS: dict[str, worker] = {
 }
 
 
-def get_worker(job: dict[str, str]) -> worker:
+def get_worker(config_input: ConfigInput) -> worker:
     """
     Given a job definition, select the appropriate worker function.
 
     Parameters
     ----------
-    job : dict[str, str]
-        dictionary defining a worker function that is present in the
-        WORKERS dictionary.
+    config_input : ConfigInput
+        Config dataclass with information to complete the job.
 
     Returns
     -------
@@ -88,4 +88,4 @@ def get_worker(job: dict[str, str]) -> worker:
         The appropriate worker function given the `kind` field in the
         input dictionary defining a job.
     """
-    return WORKERS[job["kind"]]
+    return WORKERS[config_input.job["kind"]]
