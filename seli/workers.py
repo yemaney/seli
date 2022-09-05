@@ -60,8 +60,13 @@ def field_worker(config_input: ConfigInput):
     config_input : ConfigInput
         Config dataclass with information to complete the job.
     """
+    if config_input.job.get("secret"):
+        keys = config_input.secrets[config_input.job["secret"]]
+    else:
+        keys = config_input.job["text"]
+
     button = browser.find_element(By.XPATH, config_input.job["xpath"])
-    button.send_keys(config_input.job["text"])
+    button.send_keys(keys)
 
 
 worker = Callable[[ConfigInput], None]
