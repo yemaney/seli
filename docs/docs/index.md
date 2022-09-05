@@ -9,6 +9,45 @@
 
 ---
 
+## Installation Options
+
+*Example using windows. Commands may have to be tweaked for linux or mac systems*
+
+=== "Clone Repo and Install with Poetry"
+
+    ```sh
+    git clone https://github.com/yemaney/seli.git
+    cd seli
+    poetry install
+    ```
+
+=== "Download whl"
+
+    - download .whl from github repo [seli-2.0.0-py3-none-any.whl](https://github.com/yemaney/seli/blob/main/dist/seli-2.0.0-py3-none-any.whl)
+    ```sh
+    python -m venv .venv
+    source .venv/Scripts/activate
+    pip install seli-2.0.0-py3-none-any.whl
+    ```
+
+---
+
+## Usage
+
+=== "No arguments"
+
+    ![seli no args](/images/seli_no_args.PNG)
+
+=== "help"
+
+    ![seli help](/images/seli_help.PNG)
+
+=== "all arguments"
+
+    ![seli all args](/images/seli_all_args.PNG)
+
+---
+
 ## Workflow
 
 ```mermaid
