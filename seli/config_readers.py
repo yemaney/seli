@@ -6,6 +6,10 @@ import sys
 from dataclasses import dataclass, field
 from typing import Generator
 
+from seli.logging_helper import get_logger
+
+logger = get_logger(__name__)
+
 
 @dataclass(frozen=True)
 class Configs:
@@ -38,17 +42,19 @@ def read_configs(args: list[str]) -> Generator[Configs, None, None]:
     ValueError
         if the jobs JSON file doesn't have a `jobs` key
     """
-
     with open(args[1]) as fp:
         jobs = json.load(fp)
+        logger.info("job config found")
 
     if jobs.get("jobs") is None:
+        logger.error("No jobs found : Check if input has a 'jobs' key")
         raise ValueError("No jobs found : Check if input has a 'jobs' key")
 
     secrets = None
     if len(args) > 2:
         with open(args[2]) as fp:
             secrets = json.load(fp)
+            logger.info("secrets config found")
 
     for job in jobs.get("jobs"):
         config_fields = {"job": job}
@@ -60,4 +66,5 @@ def read_configs(args: list[str]) -> Generator[Configs, None, None]:
 
 def read_args() -> list[str]:
     """simple helper function to read sys args"""
+    logger.info("reading sys.argv")
     return sys.argv

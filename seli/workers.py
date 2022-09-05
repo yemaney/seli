@@ -17,6 +17,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
+from seli.logging_helper import get_logger
+
+logger = get_logger(__name__)
+
 browser = webdriver.Chrome(ChromeDriverManager().install())
 
 
@@ -34,6 +38,7 @@ def browser_worker(config_input: ConfigInput):
     config_input : ConfigInput
         Config dataclass with information to complete the job.
     """
+    logger.info(f"going to url :{config_input.job['url']}")
     browser.get(config_input.job["url"])
 
 
@@ -46,6 +51,7 @@ def button_worker(config_input: ConfigInput):
     config_input : ConfigInput
         Config dataclass with information to complete the job.
     """
+    logger.info(f"clicking button at xpath :{config_input.job['xpath']}")
     button = browser.find_element(By.XPATH, config_input.job["xpath"])
     button.click()
 
@@ -65,6 +71,7 @@ def field_worker(config_input: ConfigInput):
     else:
         keys = config_input.job["text"]
 
+    logger.info(f"sending keys to field at xpath :{config_input.job['xpath']}")
     button = browser.find_element(By.XPATH, config_input.job["xpath"])
     button.send_keys(keys)
 
