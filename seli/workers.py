@@ -16,6 +16,7 @@ from typing import Callable, Protocol
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
 
 from seli.logging_helper import get_logger
@@ -23,15 +24,17 @@ from seli.logging_helper import get_logger
 logger = get_logger(__name__)
 
 
-browser = webdriver.Chrome(ChromeDriverManager().install())
-
-
 class ConfigInput(Protocol):
     job: dict[str, str]
     secrets: dict[str, str]
 
 
-worker = Callable[[ConfigInput], None]
+worker = Callable[[ConfigInput, WebDriver], None]
+
+
+def start_browser() -> WebDriver:
+    """Start Chrome Browser Session"""
+    return webdriver.Chrome(ChromeDriverManager().install())
 
 
 def log_worker(func: worker) -> worker:
@@ -51,7 +54,7 @@ def log_worker(func: worker) -> worker:
     """
 
     @functools.wraps(func)
-    def inner(config_input: ConfigInput) -> None:
+    def inner(config_input: ConfigInput, browser: WebDriver) -> None:
 
         if config_input.job.get("url") is not None:
             info = config_input.job["url"]
@@ -59,14 +62,14 @@ def log_worker(func: worker) -> worker:
             info = config_input.job["xpath"]
 
         logger.info(f"{func.__name__} at {info}")
-        res = func(config_input)
+        res = func(config_input, browser)
         return res
 
     return inner
 
 
 @log_worker
-def browser_worker(config_input: ConfigInput) -> None:
+def browser_worker(config_input: ConfigInput, browser: WebDriver) -> None:
     """
     Browses to a particular url.
 
@@ -74,12 +77,14 @@ def browser_worker(config_input: ConfigInput) -> None:
     ----------
     config_input : ConfigInput
         Config dataclass with information to complete the job.
+    browser: WebDriver
+        selenium webdriver connected to a browser session
     """
     browser.get(config_input.job["url"])
 
 
 @log_worker
-def button_worker(config_input: ConfigInput) -> None:
+def button_worker(config_input: ConfigInput, browser: WebDriver) -> None:
     """
     Finds a button using an XPATH string and clicks it.
 
@@ -87,13 +92,15 @@ def button_worker(config_input: ConfigInput) -> None:
     ----------
     config_input : ConfigInput
         Config dataclass with information to complete the job.
+    browser: WebDriver
+        selenium webdriver connected to a browser session
     """
     button = browser.find_element(By.XPATH, config_input.job["xpath"])
     button.click()
 
 
 @log_worker
-def field_worker(config_input: ConfigInput) -> None:
+def field_worker(config_input: ConfigInput, browser: WebDriver) -> None:
     """
     Finds a text field using an XPATH and then enters text
     into the field.
@@ -102,6 +109,8 @@ def field_worker(config_input: ConfigInput) -> None:
     ----------
     config_input : ConfigInput
         Config dataclass with information to complete the job.
+    browser: WebDriver
+        selenium webdriver connected to a browser session
     """
     if config_input.job.get("secret"):
         keys = config_input.secrets[config_input.job["secret"]]

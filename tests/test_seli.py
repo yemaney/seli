@@ -8,7 +8,7 @@ from seli.config_readers import read_configs
 
 
 def test_version():
-    assert __version__ == "1.3.2"
+    assert __version__ == "2.0.0"
 
 
 def test_read_jobs_fails():
@@ -22,6 +22,6 @@ def test_read_jobs_fails():
     with pytest.raises(
         ValueError, match="No jobs found : Check if input has a 'jobs' key"
     ):
-        next(read_configs(["", "input.json"]))
+        next(read_configs(jobs_path="input.json", secrets_path=""))
 
     os.remove(test_file)
