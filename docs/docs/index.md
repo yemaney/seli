@@ -36,15 +36,15 @@
 
 === "No arguments"
 
-    ![seli no args](/images/seli_no_args.PNG)
+    ![seli no args](./images/seli_no_args.PNG)
 
 === "help"
 
-    ![seli help](/images/seli_help.PNG)
+    ![seli help](./images/seli_help.PNG)
 
 === "all arguments"
 
-    ![seli all args](/images/seli_all_args.PNG)
+    ![seli all args](./images/seli_all_args.PNG)
 
 ---
 
